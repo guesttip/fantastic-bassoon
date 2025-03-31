@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GuestTip Admin Panel</title>
+<style>
+body { background:#000; color:gold; font-family:sans-serif; padding:2rem; text-align:center; }
+table { width:100%; margin-top:1rem; border-collapse:collapse; background:#111; }
+th, td { border:1px solid #444; padding:0.8rem; }
+input { width:100%; padding:0.4rem; border-radius:5px; font-size:0.9rem; }
+button { background:red; color:white; padding:0.5rem 1rem; border:none; border-radius:6px; cursor:pointer; margin:2px; }
+.btn-save { background:gold; color:black; }
+</style></head>
+<body>
+<h1>GuestTip Admin Panel</h1>
+<table>
+<thead><tr><th>Name</th><th>Email</th><th>QR Code Link</th><th>Actions</th></tr></thead>
+<tbody id="userTable"></tbody>
+</table>
+<script>
+fetch("/users").then(res => res.json()).then(users => {
+  const table = document.getElementById('userTable');
+  Object.entries(users).forEach(([name, user]) => {
+    const row = document.createElement('tr');
+    row.innerHTML = \`
+      <td>\${name}</td>
+      <td>\${user.email}</td>
+      <td><input value="\${user.qr_link}" readonly></td>
+      <td><button onclick="deleteUser('\${user.code}')">Delete</button></td>
+    \`;
+    table.appendChild(row);
+  });
+});
+function deleteUser(code) {
+  fetch('/user/' + code, { method: 'DELETE' }).then(() => location.reload());
+}
+</script>
+</body></html>
